@@ -1,0 +1,29 @@
+name: KSA Portal external monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ksa-portal-external-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PORTAL_URL: https://ksaprojectportal.vercel.app
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_METRICS_SECRET_KEY: ${{ secrets.SUPABASE_METRICS_SECRET_KEY }}
+      PORTAL_SYNTHETIC_EMAIL: ${{ secrets.PORTAL_SYNTHETIC_EMAIL }}
+      PORTAL_SYNTHETIC_PASSWORD: ${{ secrets.PORTAL_SYNTHETIC_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run independent portal checks
+        run: node monitor.mjs
