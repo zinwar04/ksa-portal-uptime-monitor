@@ -14,7 +14,9 @@ concurrency:
 
 jobs:
   monitor:
-    runs-on: ubuntu-latest
+    # A single-CPU hosted container is sufficient for this small Node health
+    # check and keeps the public monitor on GitHub's free runner tier.
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     env:
       PORTAL_URL: https://ksaprojectportal.vercel.app
